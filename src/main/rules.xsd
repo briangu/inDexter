@@ -1,0 +1,19 @@
+<xsd:schema targetNamespace="" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="rules">    
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="rule" minOccurs="0" maxOccurs="unbounded" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="rule">    
+        <xsd:complexType>
+            <xsd:sequence>
+            </xsd:sequence>
+            <xsd:attribute name="ruleName" type="xsd:string"/>
+            <xsd:attribute name="ruleClass" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element> 
+
+</xsd:schema>

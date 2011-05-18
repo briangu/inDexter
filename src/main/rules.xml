@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Document   : rules.xml
+	Created on : January 18, 2008, 2:48 PM
+	Author     : U15752
+	Description:
+	Purpose of the document follows.
+-->
+<rules>
+    <rule ruleName="MaxParamsForMethod"  
+        ruleClass="demo.codeanalyzer.javacode.rule.MaxParamsForMethod" /> 
+    <rule ruleName="OverrideEqualsHashCode"  
+        ruleClass="demo.codeanalyzer.javacode.rule.OverrideEqualsHashCode" /> 
+</rules>		
