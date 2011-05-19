@@ -1,14 +1,18 @@
 package demo.codeanalyzer.processor;
 
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import java.util.Stack;
 import javax.annotation.processing.AbstractProcessor;
+import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
@@ -39,19 +43,42 @@ public class CodeAnalyzerController
     List<File> files = getFilesAsList(fileNames);
     if (files.size() > 0)
     {
-      Iterable<? extends JavaFileObject> compilationUnits1 = fileManager.getJavaFileObjectsFromFiles(files);
-      CompilationTask task = compiler.getTask(null, fileManager, null, null, null, compilationUnits1);
-      LinkedList<AbstractProcessor> processors = new LinkedList<AbstractProcessor>();
-      processors.add(new CodeAnalyzerProcessor());
-      task.setProcessors(processors);
-      task.call();
+      FileWriter fstream = null;
+      BufferedWriter writer = null;
+
       try
       {
+        fstream = new FileWriter("out.json");
+        writer = new BufferedWriter(fstream);
+
+        DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<JavaFileObject>();
+        Iterable<? extends JavaFileObject> compilationUnits1 = fileManager.getJavaFileObjectsFromFiles(files);
+        String[] options = new String[] { "-cp", "/Users/bguarrac/workspace/network/build/eclipse.compile/lib/eclipse-compile-manifest-classpath.jar", "-nowarn" };
+        CompilationTask task = compiler.getTask(null, fileManager, collector, Arrays.asList(options), null, compilationUnits1);
+        LinkedList<AbstractProcessor> processors = new LinkedList<AbstractProcessor>();
+        processors.add(new CodeAnalyzerProcessor(writer));
+        task.setProcessors(processors);
+        task.call();
         fileManager.close();
       }
       catch (IOException e)
       {
         System.out.println(e.getLocalizedMessage());
+      }
+      finally
+      {
+        if (writer != null)
+        {
+          try
+          {
+            writer.flush();
+            writer.close();
+          }
+          catch (IOException e)
+          {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+          }
+        }
       }
     }
     else

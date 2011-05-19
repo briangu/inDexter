@@ -3,6 +3,9 @@ package demo.codeanalyzer.processor;
 
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -34,6 +37,13 @@ public class CodeAnalyzerProcessor extends AbstractProcessor
 {
 
   private Trees trees;
+  private BufferedWriter _writer;
+
+  public CodeAnalyzerProcessor(BufferedWriter writer)
+  {
+    _writer = writer;
+  }
+
 
   @Override
   public void init(ProcessingEnvironment pe)
@@ -53,32 +63,39 @@ public class CodeAnalyzerProcessor extends AbstractProcessor
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnvironment)
   {
-
-    // Scanner class to scan through various component elements
-
     for (Element e : roundEnvironment.getRootElements())
     {
-      TreePath tp = trees.getPath(e);
-      // invoke the scanner
-      CodeAnalyzerTreeVisitor visitor = new CodeAnalyzerTreeVisitor();
-      visitor.scan(tp, trees);
-      TypeElement typeElement = (TypeElement) e;
-      String className = typeElement.getQualifiedName().toString();
-      JavaClassInfo clazzInfo = visitor.getClassInfo();
-      LocationInfoSetter.setLocationInfoForElements(clazzInfo);
-
-      String jsonObject = null;
       try
       {
+        TreePath tp = trees.getPath(e);
+        // invoke the scanner
+        CodeAnalyzerTreeVisitor visitor = new CodeAnalyzerTreeVisitor();
+        visitor.scan(tp, trees);
+        TypeElement typeElement = (TypeElement) e;
+        String className = typeElement.getQualifiedName().toString();
+        JavaClassInfo clazzInfo = visitor.getClassInfo();
+        LocationInfoSetter.setLocationInfoForElements(clazzInfo);
+
+        String jsonObject = null;
         String json = clazzInfo.toJSON();
+        _writer.write(json);
+        _writer.write("\n");
         System.out.println(json);
+//            ClassModelMap.getInstance().addClassInfo(className, clazzInfo);
+//            CodeAnalyzer.getInstance().process(className);
       }
       catch (JSONException e1)
       {
         e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
       }
-//            ClassModelMap.getInstance().addClassInfo(className, clazzInfo);
-//            CodeAnalyzer.getInstance().process(className);
+      catch (NullPointerException ex)
+      {
+        ex.printStackTrace();
+      }
+      catch (IOException e1)
+      {
+        e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+      }
     }
 
     return true;
