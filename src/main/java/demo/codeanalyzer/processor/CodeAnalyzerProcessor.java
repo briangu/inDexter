@@ -76,11 +76,14 @@ public class CodeAnalyzerProcessor extends AbstractProcessor
         JavaClassInfo clazzInfo = visitor.getClassInfo();
         LocationInfoSetter.setLocationInfoForElements(clazzInfo);
 
-        String jsonObject = null;
-        String json = clazzInfo.toJSON();
-        _writer.write(json);
-        _writer.write("\n");
+        String json;
+
+        json = clazzInfo.toClassMetaInfoJSON();
         System.out.println(json);
+        _writer.write("sensei:" + json);
+        _writer.write("\n");
+        _writer.write("meta:" + clazzInfo.toClassMetaInfoJSON());
+        _writer.write("\n");
 //            ClassModelMap.getInstance().addClassInfo(className, clazzInfo);
 //            CodeAnalyzer.getInstance().process(className);
       }
