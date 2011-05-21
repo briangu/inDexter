@@ -220,6 +220,7 @@ public class JavaClassInfo extends BaseJavaClassModelInfo implements ClassFile, 
 
     obj.put("hashId", getHashId());
     obj.put("id", getId());
+    obj.put("sourceFile", getSourceFile());
 
     List<String> textParts = new ArrayList<String>();
     Set<String> set;
@@ -230,7 +231,7 @@ public class JavaClassInfo extends BaseJavaClassModelInfo implements ClassFile, 
       textParts.add(method.getName());
       set.add(method.getName());
     }
-    obj.put("methods", new JSONArray(set));
+    obj.put("methods", join(",", set));
 
     set = new HashSet<String>();
     for (Method method : getConstructors())
@@ -238,7 +239,7 @@ public class JavaClassInfo extends BaseJavaClassModelInfo implements ClassFile, 
       textParts.add(method.getName());
       set.add(method.getName());
     }
-    obj.put("constructors", new JSONArray(set));
+    obj.put("constructors", join(",", set));
 
     set = new HashSet<String>();
     for (Field field : getFields())
@@ -246,7 +247,7 @@ public class JavaClassInfo extends BaseJavaClassModelInfo implements ClassFile, 
       textParts.add(field.getName());
       set.add(field.getName());
     }
-    obj.put("fields", new JSONArray(set));
+    obj.put("fields", join(",", set));
 
     set = new HashSet<String>();
     for (String interfaceName : getNameOfInterfaces())
@@ -254,7 +255,7 @@ public class JavaClassInfo extends BaseJavaClassModelInfo implements ClassFile, 
       textParts.add(interfaceName);
       set.add(interfaceName);
     }
-    obj.put("interfaces", new JSONArray(set));
+    obj.put("interfaces", join(",", set));
 
     textParts.add(getName());
 
@@ -262,10 +263,22 @@ public class JavaClassInfo extends BaseJavaClassModelInfo implements ClassFile, 
     obj.put("name", getName());
     obj.put("nameOfSuperClass", getNameOfSuperClass());
 
-//    obj.put("text", Joiner.on(",").join(textParts));
-    obj.put("time", 0);
+    obj.put("text", join(",", textParts));
 
     return obj.toString();
+  }
+
+  public static String join(String delim, Collection<String> collection)
+  {
+    StringBuilder sb = new StringBuilder();
+
+    for (String s : collection)
+    {
+      sb.append(s);
+      sb.append(delim);
+    }
+
+    return sb.toString();
   }
 
   public String toClassMetaInfoJSON()
@@ -275,6 +288,7 @@ public class JavaClassInfo extends BaseJavaClassModelInfo implements ClassFile, 
 
     obj.put("hashId", getHashId());
     obj.put("id", getId());
+    obj.put("sourceFile", getSourceFile());
 
     JSONArray arr = new JSONArray();
     for (Method method : getMethods())
@@ -304,6 +318,8 @@ public class JavaClassInfo extends BaseJavaClassModelInfo implements ClassFile, 
     }
     obj.put("interfaces", arr);
 
+    obj.put("classLoc", getLocationObject(getLocationInfo()));
+
     obj.put("isInterface", Boolean.toString(isInterface()));
     obj.put("isTopLevelClass", Boolean.toString(isInterface()));
     obj.put("isSerializable", Boolean.toString(isInterface()));
@@ -319,11 +335,26 @@ public class JavaClassInfo extends BaseJavaClassModelInfo implements ClassFile, 
     throws JSONException
   {
     JSONObject obj = new JSONObject();
-
     obj.put("name", method.getName());
-    obj.put("lineNumber", method.getLocationInfo().getLineNumber());
+    obj.put("loc", getLocationObject(method.getLocationInfo()));
 
     return obj;
+  }
+
+  private JSONObject getLocationObject(Location location)
+    throws JSONException
+  {
+    JSONObject loc = new JSONObject();
+    JSONObject start = new JSONObject();
+    start.put("line", location.getStartLineNumber());
+    start.put("ch", location.getStartRelativeOffset());
+    JSONObject stop = new JSONObject();
+    stop.put("line", location.getStartLineNumber());
+    stop.put("ch", location.getEndRelativeOffset());
+    loc.put("start", start);
+    loc.put("stop", stop);
+
+    return loc;
   }
 
   private JSONObject getFieldJsonObject(Field field)
@@ -332,7 +363,7 @@ public class JavaClassInfo extends BaseJavaClassModelInfo implements ClassFile, 
     JSONObject obj = new JSONObject();
 
     obj.put("name", field.getName());
-    obj.put("lineNumber", field.getLocationInfo().getLineNumber());
+    obj.put("loc", getLocationObject(field.getLocationInfo()));
 
     return obj;
   }

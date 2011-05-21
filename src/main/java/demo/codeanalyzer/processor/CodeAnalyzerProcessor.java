@@ -3,6 +3,7 @@ package demo.codeanalyzer.processor;
 
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
+import com.sun.tools.javac.code.Symbol;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -76,9 +77,11 @@ public class CodeAnalyzerProcessor extends AbstractProcessor
         JavaClassInfo clazzInfo = visitor.getClassInfo();
         LocationInfoSetter.setLocationInfoForElements(clazzInfo);
 
+        clazzInfo.setSourceFile(((Symbol.ClassSymbol)e).sourcefile.toString());
+
         String json;
 
-        json = clazzInfo.toClassMetaInfoJSON();
+        json = clazzInfo.toSenseiDocumentJSON();
         System.out.println(json);
         _writer.write("sensei:" + json);
         _writer.write("\n");

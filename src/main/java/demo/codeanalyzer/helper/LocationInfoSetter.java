@@ -77,8 +77,8 @@ public class LocationInfoSetter
   private static void setLocInfoOfClass(JavaClassInfo clazzInfo, CharBuffer buffer, CompilationUnitTree compileTree)
   {
     String clazzName = CodeAnalyzerUtil.getSimpleNameFromQualifiedName(clazzInfo.getName());
-    LocationInfo clazzNameLoc = (LocationInfo) clazzInfo.getLocationInfo();
-    int startIndex = clazzNameLoc.getStartOffset();
+    LocationInfo loc = (LocationInfo) clazzInfo.getLocationInfo();
+    int startIndex = loc.getStartOffset();
     int endIndex = -1;
     if (startIndex >= 0)
     {
@@ -89,10 +89,39 @@ public class LocationInfoSetter
       startIndex = matcher.start() + startIndex;
       endIndex = startIndex + clazzName.length();
     }
-    clazzNameLoc.setStartOffset(startIndex);
-    clazzNameLoc.setEndOffset(endIndex);
-    clazzNameLoc.setLineNumber(compileTree.getLineMap().
-                                                         getLineNumber(startIndex));
+
+    loc.setStartOffset(startIndex);
+    loc.setEndOffset(endIndex);
+    loc.setStartColumn(getRelativeOffset(compileTree, startIndex));
+    loc.setStopColumn(getRelativeOffset(compileTree, endIndex));
+    loc.setStartLineNumber(compileTree.getLineMap().getLineNumber(startIndex));
+    loc.setStopLineNumber(compileTree.getLineMap().getLineNumber(endIndex));
+  }
+
+  private static int getRelativeOffset(CompilationUnitTree compileTree, int index)
+  {
+    try
+    {
+      return (int)compileTree.getLineMap().getColumnNumber(index);
+    }
+    catch(ArrayIndexOutOfBoundsException e)
+    {
+      System.out.println("failed to get col for " + index);
+    }
+
+    return 0;
+/*
+    int originalIndex = index;
+    int relativeOffset = 0;
+    long startLineNumber = compileTree.getLineMap().getLineNumber(index);
+    if (startLineNumber <= 0) return index;
+    while(startLineNumber >= compileTree.getLineMap().getLineNumber(--index) && (index >= 0))
+    {
+      relativeOffset++;
+    }
+
+    return relativeOffset;
+*/
   }
 
   /**
@@ -110,8 +139,8 @@ public class LocationInfoSetter
     {
       try
       {
-        LocationInfo constructorNameLoc = (LocationInfo)method.getLocationInfo();
-        int startIndex = constructorNameLoc.getStartOffset();
+        LocationInfo loc = (LocationInfo)method.getLocationInfo();
+        int startIndex = loc.getStartOffset();
         int endIndex = -1;
         if (startIndex >= 0)
         {
@@ -122,9 +151,12 @@ public class LocationInfoSetter
           startIndex = matcher.start() + startIndex;
           endIndex = startIndex + method.getName().length();
         }
-        constructorNameLoc.setStartOffset(startIndex);
-        constructorNameLoc.setEndOffset(endIndex);
-        constructorNameLoc.setLineNumber(compileTree.getLineMap().getLineNumber(startIndex));
+        loc.setStartOffset(startIndex);
+        loc.setEndOffset(endIndex);
+        loc.setStartColumn(getRelativeOffset(compileTree, startIndex));
+        loc.setStopColumn(getRelativeOffset(compileTree, endIndex));
+        loc.setStartLineNumber(compileTree.getLineMap().getLineNumber(startIndex));
+        loc.setStopLineNumber(compileTree.getLineMap().getLineNumber(endIndex));
       }
       catch(IllegalStateException e)
       {
@@ -146,8 +178,8 @@ public class LocationInfoSetter
     {
       try
       {
-        LocationInfo methodNameLoc = (LocationInfo) method.getLocationInfo();
-        int startIndex = methodNameLoc.getStartOffset();
+        LocationInfo loc = (LocationInfo) method.getLocationInfo();
+        int startIndex = loc.getStartOffset();
         int endIndex = -1;
         if (startIndex >= 0)
         {
@@ -158,9 +190,12 @@ public class LocationInfoSetter
           startIndex = matcher.start() + startIndex;
           endIndex = startIndex + method.getName().length();
         }
-        methodNameLoc.setStartOffset(startIndex);
-        methodNameLoc.setEndOffset(endIndex);
-        methodNameLoc.setLineNumber(compileTree.getLineMap().getLineNumber(startIndex));
+        loc.setStartOffset(startIndex);
+        loc.setEndOffset(endIndex);
+        loc.setStartColumn(getRelativeOffset(compileTree, startIndex));
+        loc.setStopColumn(getRelativeOffset(compileTree, endIndex));
+        loc.setStartLineNumber(compileTree.getLineMap().getLineNumber(startIndex));
+        loc.setStopLineNumber(compileTree.getLineMap().getLineNumber(endIndex));
       }
       catch(IllegalStateException e)
       {
@@ -175,8 +210,8 @@ public class LocationInfoSetter
     {
       try
       {
-        LocationInfo methodNameLoc = (LocationInfo) field.getLocationInfo();
-        int startIndex = methodNameLoc.getStartOffset();
+        LocationInfo loc = (LocationInfo) field.getLocationInfo();
+        int startIndex = loc.getStartOffset();
         int endIndex = -1;
         if (startIndex >= 0)
         {
@@ -187,9 +222,12 @@ public class LocationInfoSetter
           startIndex = matcher.start() + startIndex;
           endIndex = startIndex + field.getName().length();
         }
-        methodNameLoc.setStartOffset(startIndex);
-        methodNameLoc.setEndOffset(endIndex);
-        methodNameLoc.setLineNumber(compileTree.getLineMap().getLineNumber(startIndex));
+        loc.setStartOffset(startIndex);
+        loc.setEndOffset(endIndex);
+        loc.setStartColumn(getRelativeOffset(compileTree, startIndex));
+        loc.setStopColumn(getRelativeOffset(compileTree, endIndex));
+        loc.setStartLineNumber(compileTree.getLineMap().getLineNumber(startIndex));
+        loc.setStopLineNumber(compileTree.getLineMap().getLineNumber(endIndex));
       }
       catch(IllegalStateException e)
       {

@@ -6,9 +6,11 @@ package demo.codeanalyzer.common.model;
  */
 public interface Location {
 
-    int getStartOffset();
+  int getStartOffset();
+  int getEndOffset();
+  int getStartRelativeOffset();
+  int getEndRelativeOffset();
 
-    int getEndOffset();
-    
-    long getLineNumber();
+  long getStartLineNumber();
+  long getStopLineNumber();
 }
