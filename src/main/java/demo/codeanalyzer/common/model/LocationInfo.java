@@ -56,7 +56,7 @@ public class LocationInfo implements Location
     this.stopLineNumber = lineNumber;
   }
 
-  public int getEndRelativeOffset()
+  public int getEndColumn()
   {
     return endRelativeOffset;
   }
@@ -66,7 +66,7 @@ public class LocationInfo implements Location
     this.endRelativeOffset = lineNumber;
   }
 
-  public int getStartRelativeOffset()
+  public int getStartColumn()
   {
     return startRelativeOffset;
   }

@@ -92,13 +92,13 @@ public class LocationInfoSetter
 
     loc.setStartOffset(startIndex);
     loc.setEndOffset(endIndex);
-    loc.setStartColumn(getRelativeOffset(compileTree, startIndex));
-    loc.setStopColumn(getRelativeOffset(compileTree, endIndex));
+    loc.setStartColumn(getColumn(compileTree, startIndex));
+    loc.setStopColumn(getColumn(compileTree, endIndex));
     loc.setStartLineNumber(compileTree.getLineMap().getLineNumber(startIndex));
     loc.setStopLineNumber(compileTree.getLineMap().getLineNumber(endIndex));
   }
 
-  private static int getRelativeOffset(CompilationUnitTree compileTree, int index)
+  private static int getColumn(CompilationUnitTree compileTree, int index)
   {
     try
     {
@@ -110,18 +110,6 @@ public class LocationInfoSetter
     }
 
     return 0;
-/*
-    int originalIndex = index;
-    int relativeOffset = 0;
-    long startLineNumber = compileTree.getLineMap().getLineNumber(index);
-    if (startLineNumber <= 0) return index;
-    while(startLineNumber >= compileTree.getLineMap().getLineNumber(--index) && (index >= 0))
-    {
-      relativeOffset++;
-    }
-
-    return relativeOffset;
-*/
   }
 
   /**
@@ -153,8 +141,8 @@ public class LocationInfoSetter
         }
         loc.setStartOffset(startIndex);
         loc.setEndOffset(endIndex);
-        loc.setStartColumn(getRelativeOffset(compileTree, startIndex));
-        loc.setStopColumn(getRelativeOffset(compileTree, endIndex));
+        loc.setStartColumn(getColumn(compileTree, startIndex));
+        loc.setStopColumn(getColumn(compileTree, endIndex));
         loc.setStartLineNumber(compileTree.getLineMap().getLineNumber(startIndex));
         loc.setStopLineNumber(compileTree.getLineMap().getLineNumber(endIndex));
       }
@@ -192,8 +180,8 @@ public class LocationInfoSetter
         }
         loc.setStartOffset(startIndex);
         loc.setEndOffset(endIndex);
-        loc.setStartColumn(getRelativeOffset(compileTree, startIndex));
-        loc.setStopColumn(getRelativeOffset(compileTree, endIndex));
+        loc.setStartColumn(getColumn(compileTree, startIndex));
+        loc.setStopColumn(getColumn(compileTree, endIndex));
         loc.setStartLineNumber(compileTree.getLineMap().getLineNumber(startIndex));
         loc.setStopLineNumber(compileTree.getLineMap().getLineNumber(endIndex));
       }
@@ -224,8 +212,8 @@ public class LocationInfoSetter
         }
         loc.setStartOffset(startIndex);
         loc.setEndOffset(endIndex);
-        loc.setStartColumn(getRelativeOffset(compileTree, startIndex));
-        loc.setStopColumn(getRelativeOffset(compileTree, endIndex));
+        loc.setStartColumn(getColumn(compileTree, startIndex));
+        loc.setStopColumn(getColumn(compileTree, endIndex));
         loc.setStartLineNumber(compileTree.getLineMap().getLineNumber(startIndex));
         loc.setStopLineNumber(compileTree.getLineMap().getLineNumber(endIndex));
       }

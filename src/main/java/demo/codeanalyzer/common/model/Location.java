@@ -8,8 +8,8 @@ public interface Location {
 
   int getStartOffset();
   int getEndOffset();
-  int getStartRelativeOffset();
-  int getEndRelativeOffset();
+  int getStartColumn();
+  int getEndColumn();
 
   long getStartLineNumber();
   long getStopLineNumber();

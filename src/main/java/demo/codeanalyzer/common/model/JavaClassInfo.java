@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -263,7 +264,7 @@ public class JavaClassInfo extends BaseJavaClassModelInfo implements ClassFile, 
     obj.put("name", getName());
     obj.put("nameOfSuperClass", getNameOfSuperClass());
 
-    obj.put("text", join(",", textParts));
+    obj.put("text", join(" ", textParts));
 
     return obj.toString();
   }
@@ -272,10 +273,15 @@ public class JavaClassInfo extends BaseJavaClassModelInfo implements ClassFile, 
   {
     StringBuilder sb = new StringBuilder();
 
-    for (String s : collection)
+    Iterator iter = collection.iterator();
+    while(iter.hasNext())
     {
+      String s = (String) iter.next();
       sb.append(s);
-      sb.append(delim);
+      if (iter.hasNext())
+      {
+        sb.append(delim);
+      }
     }
 
     return sb.toString();
@@ -347,10 +353,10 @@ public class JavaClassInfo extends BaseJavaClassModelInfo implements ClassFile, 
     JSONObject loc = new JSONObject();
     JSONObject start = new JSONObject();
     start.put("line", location.getStartLineNumber());
-    start.put("ch", location.getStartRelativeOffset());
+    start.put("ch", location.getStartColumn());
     JSONObject stop = new JSONObject();
     stop.put("line", location.getStartLineNumber());
-    stop.put("ch", location.getEndRelativeOffset());
+    stop.put("ch", location.getEndColumn());
     loc.put("start", start);
     loc.put("stop", stop);
 
